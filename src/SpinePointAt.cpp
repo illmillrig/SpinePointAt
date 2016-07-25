@@ -18,7 +18,7 @@ inline double max(double a, double b) {
 }
 
 
-inline MQuaternion quatFromMatrix(const MMatrix &tfm) {
+MQuaternion quatFromMatrix(const MMatrix &tfm) {
 	double x, y, z, w;
 	w = std::sqrt(max(0.0, 1.0 + tfm[0][0] + tfm[1][1] + tfm[2][2])) / 2.0;
 	x = std::sqrt(max(0.0, 1.0 + tfm[0][0] - tfm[1][1] - tfm[2][2])) / 2.0;
@@ -139,42 +139,50 @@ MStatus SpinePointAt::compute( const MPlug& plug, MDataBlock& data ) {
 	MQuaternion quatB = quatFromMatrix(tfmB);
 
 	double dot = this->quatDot(quatA, quatB);
+
 	double angle, factor;
 	this->angleAndFactor(dot, angle, factor);
 
 	double factorA, factorB;
 	this->scaleAngleAndFactor(dot, blend, angle, factor, factorA, factorB);
+
 	MQuaternion quatC = this->scaleQuat(quatA, quatB, factorA, factorB);
 
-	MVector vOut;
-	if (axis == 0)
-		vOut = MVector(1, 0, 0);
-	else if (axis == 1)
-		vOut = MVector(0, 1, 0);
-	else if (axis == 2)
-		vOut = MVector(0, 0, 1);
-	else if (axis == 3)
-		vOut = MVector(-1, 0, 0);
-	else if (axis == 4)
-		vOut = MVector(0, -1, 0);
-	else if (axis == 5)
-		vOut = MVector(0, 0, -1);
+	MVector vOut (0.0, 0.0, 0.0);
 
-	vOut = vOut.rotateBy(quatC);
+	if (axis == 0)
+		vOut.x = 1.0;
+
+	else if (axis == 1)
+		vOut.y = 1.0;
+
+	else if (axis == 2)
+		vOut.z = 1.0;
+
+	else if (axis == 3)
+		vOut.x = -1.0;
+
+	else if (axis == 4)
+		vOut.y = -1.0;
+
+	else if (axis == 5)
+		vOut.z = -1.0;
+
+	vOut *= quatC;
 
 	data.outputValue(SpinePointAt::pointAt).setMVector(vOut);
-	data.setClean(plug);
 
+	data.setClean(plug);
 	return MS::kSuccess;
 }
 
 
-double SpinePointAt::quatDot(const MQuaternion &quatA, const MQuaternion &quatB) {
+inline double SpinePointAt::quatDot(const MQuaternion &quatA, const MQuaternion &quatB) const {
 	return (quatA.x * quatB.x) + (quatA.y * quatB.y) + (quatA.z * quatB.z) + (quatA.w * quatB.w);
 }
 
 
-void SpinePointAt::angleAndFactor(const double &inValue, double &angle, double &factor) {
+void SpinePointAt::angleAndFactor(const double &inValue, double &angle, double &factor) const {
 	double a = inValue;
 	double ac = acos(a);
 	double as = sin(ac);
@@ -194,7 +202,7 @@ void SpinePointAt::angleAndFactor(const double &inValue, double &angle, double &
 
 void SpinePointAt::scaleAngleAndFactor(const double &dot, const double &blend,
 									   const double &angle, const double &inFactor,
-									   double &outFactorA, double &outFactorB) {
+									   double &outFactorA, double &outFactorB) const {
 	if (dot >= 1.0){
 		outFactorA = (1.0 - blend);
 		outFactorB = blend;
@@ -205,8 +213,8 @@ void SpinePointAt::scaleAngleAndFactor(const double &dot, const double &blend,
 }
 
 
-MQuaternion SpinePointAt::scaleQuat(const MQuaternion &quatA, const MQuaternion &quatB,
-									const double &factorA, const double &factorB) {
+inline MQuaternion SpinePointAt::scaleQuat(const MQuaternion &quatA, const MQuaternion &quatB,
+									const double &factorA, const double &factorB) const {
 	return (factorA * quatA) + (factorB * quatB);
 }
 

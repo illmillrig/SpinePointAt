@@ -16,14 +16,14 @@ public:
 	static MStatus initialize();
 	virtual MStatus	compute(const MPlug& plug, MDataBlock& data);
 
-	double quatDot(const MQuaternion &quatA, const MQuaternion &quatB);
-	void angleAndFactor(const double &inValue, double &angle, double &factor);
+	double quatDot(const MQuaternion &quatA, const MQuaternion &quatB) const;
+	void angleAndFactor(const double &inValue, double &angle, double &factor) const;
 
 	void scaleAngleAndFactor(const double &dot, const double &blend, const double &angle, const double &inFactor,
-							 double &outFactorA, double &outFactorB);
+							 double &outFactorA, double &outFactorB) const;
 
 	MQuaternion scaleQuat(const MQuaternion &quatA, const MQuaternion &quatB, const double &factorA,
-						  const double &factorB);
+						  const double &factorB) const;
 public:
 	static MTypeId id;
 	static MObject tfmA;
