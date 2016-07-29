@@ -1,3 +1,3 @@
 # SpinePointAt
-(c++) Gear's SpinePointAt (-360/+360) solver by Jeremie Passerin, rewritten for Maya 2016.5
+(c++) 720 Slerp node based off Ahmidou Lyazidi 720 Slerp ICE compound, rewritten for Maya 2016.5
 
