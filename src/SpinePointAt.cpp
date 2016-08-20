@@ -40,39 +40,6 @@ inline void quatFromMatrix(const MMatrix &tfm, MQuaternion &quat) {
 }
 
 
-inline void calculateRotation(const MMatrix &a, MQuaternion &q) {
-  double trace = a[0][0] + a[1][1] + a[2][2];
-  if( trace > 0 ) {
-    double s = 0.5 / sqrt(trace + 1.0);
-    q.w = 0.25f / s;
-    q.x = ( a[2][1] - a[1][2] ) * s;
-    q.y = ( a[0][2] - a[2][0] ) * s;
-    q.z = ( a[1][0] - a[0][1] ) * s;
-  } else {
-    if ( a[0][0] > a[1][1] && a[0][0] > a[2][2] ) {
-      double s = 2.0 * sqrt( 1.0 + a[0][0] - a[1][1] - a[2][2]);
-      q.w = (a[2][1] - a[1][2] ) / s;
-      q.x = 0.25f * s;
-      q.y = (a[0][1] + a[1][0] ) / s;
-      q.z = (a[0][2] + a[2][0] ) / s;
-    } else if (a[1][1] > a[2][2]) {
-      double s = 2.0 * sqrt( 1.0 + a[1][1] - a[0][0] - a[2][2]);
-      q.w = (a[0][2] - a[2][0] ) / s;
-      q.x = (a[0][1] + a[1][0] ) / s;
-      q.y = 0.25f * s;
-      q.z = (a[1][2] + a[2][1] ) / s;
-    } else {
-      double s = 2.0f * sqrt( 1.0 + a[2][2] - a[0][0] - a[1][1] );
-      q.w = (a[1][0] - a[0][1] ) / s;
-      q.x = (a[0][2] + a[2][0] ) / s;
-      q.y = (a[1][2] + a[2][1] ) / s;
-      q.z = 0.25f * s;
-    }
-  }
-}
-
-
-
 MTypeId SpinePointAt::id(0x001226CF);
 MObject SpinePointAt::inARotX;
 MObject SpinePointAt::inARotY;
@@ -165,7 +132,6 @@ MStatus SpinePointAt::initialize() {
 	fnNum.setWritable(false);
 	fnNum.setStorable(false);
 	SpinePointAt::addAttribute(pointAt);
-
 
     SpinePointAt::attributeAffects(inARot, pointAt);
 	SpinePointAt::attributeAffects(inBRot, pointAt);
@@ -272,42 +238,4 @@ void SpinePointAt::scaleAngleAndFactor(const double &dot, const double &blend,
 inline MQuaternion SpinePointAt::scaleQuat(const MQuaternion &quatA, const MQuaternion &quatB,
 										   const double &factorA, const double &factorB) const {
 	return (factorA * quatA) + (factorB * quatB);
-}
-
-
-
-
-MQuaternion SpinePointAt::fullSlerp(const MQuaternion &quatA, const MQuaternion &quatB, const double &blend) {
-
-    double dot = quatDot(quatA, quatB);
-
-    double scaleA, scaleB;
-
-    if (dot >= 1.0 - 1.0e-12) {
-        scaleA = 1.0 - blend;
-        scaleB = blend;
-    }
-
-
-    double angle;
-
-    if (round((-dot * dot+1) / 0.00001) * 0.00001  == 0)
-        return quatA;
-    else
-        angle = acos(dot);
-
-
-
-    double factor;
-
-    if (round(sin(angle) / 0.000001) * 0.000001 !=  0)
-        factor = 1.0 / sin(angle);
-    else
-        return quatA;
-
-
-    scaleA = sin( (1.0 - blend) * angle ) * factor;
-    scaleB = sin( blend * angle ) * factor;
-
-    return (scaleA * quatA) + (scaleB * quatB);
 }
