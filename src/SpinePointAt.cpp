@@ -21,14 +21,6 @@ inline double min(double a, double b) {
 	return (a < b) ? a : b;
 }
 
-
-inline void F3DLimit(double &d, const double dMin, const double dMax) {
-    d = max(d, dMin);
-    d = min(d, dMax);
-}
-
-
-
 inline void quatFromMatrix(const MMatrix &tfm, MQuaternion &quat) {
 	quat.w = std::sqrt(max(0.0, 1.0 + tfm[0][0] + tfm[1][1] + tfm[2][2])) / 2.0;
 	quat.x = std::sqrt(max(0.0, 1.0 + tfm[0][0] - tfm[1][1] - tfm[2][2])) / 2.0;
