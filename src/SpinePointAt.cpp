@@ -64,11 +64,6 @@ void* SpinePointAt::creator() {
 }
 
 MStatus SpinePointAt::initialize() {
-	// attributes are writable by default
-	// attributes are storable by default
-	// attributes are readable by default
-	// attributes not keyable by default
-
 	MStatus stat;
 	MFnNumericAttribute fnNum;
 	MFnMatrixAttribute fnMat;
@@ -203,7 +198,6 @@ inline double SpinePointAt::quatDot(const MQuaternion &quatA, const MQuaternion 
 void SpinePointAt::angleAndFactor(const double &in, double &angle, double &factor) const {
 
 	const double ac = acos(in);
-
 	if ( (in * -in) + 1.0 == 0.0 )
 		angle = (-1.0);
 	else
@@ -211,7 +205,6 @@ void SpinePointAt::angleAndFactor(const double &in, double &angle, double &facto
 
 
 	const double as = sin(ac);
-
 	if (as != 0.0)
 		factor = 1.0 / as;
 	else
@@ -230,8 +223,6 @@ void SpinePointAt::scaleAngleAndFactor(const double &dot, const double &blend,
 
 	outFactorA = sin(angle * (1.0 - blend)) * inFactor;
 	outFactorB = sin(angle * blend) * inFactor;
-
-
 }
 
 
